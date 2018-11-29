@@ -37,14 +37,13 @@ The exchange broadcasts two messages (multicast UDP):
 #### Price message fields
 
 | Field | Description | Value
-------------------------------------
+|------|-------------|-----------------
 | TYPE | The type of message | Fixed value: `PRICE` |
 | FEEDCODE | The instrument's feedcode | String | 
 | BID_PRICE | The price at which you can sell | Float |
 | BID_VOLUME | The volume available on the bid | Int |
 | ASK_PRICE | The price at which you can buy |Float  |
 | ASK_VOLUME | The volume available on the offer | Int |
---------------------------------------------------
 
 Example: ```TYPE=PRICE|FEEDCODE=FOOBAR|BID_PRICE=10.0|BID_VOLUME=100|ASK_PRICE=11.0|ASK_VOLUME=20```
 
@@ -52,13 +51,12 @@ Example: ```TYPE=PRICE|FEEDCODE=FOOBAR|BID_PRICE=10.0|BID_VOLUME=100|ASK_PRICE=1
 #### Trade message fields
 
 | Field | Description | Value
-------------------------------------
+--------|------------|----------------
 | TYPE | The type of message | Fixed value: `TRADE` |
 | FEEDCODE | The instrument's feedcode | String | 
 | SIDE | The side of the trade | String, `BID` or `ASK` | 
 | PRICE | The traded price | Float |
 | VOLUME | The traded volume| Int |
--------------------------------------------------
 
 Example: ```TYPE=TRADE|FEEDCODE=XXXXXX|SIDE=XXXXX|PRICE=XXX|VOLUME=XXX```
 
@@ -70,7 +68,7 @@ In order to trade, you need to send an order to the exchange (via TCP). Every or
 #### Order message fields
 
 | Field | Description | Value
-------------------------------------
+-------|--------------|---------------
 | TYPE | The type of message | Fixed value: `ORDER` |
 | USERNAME | The username associated with the order | String |
 | FEEDCODE | The instrument's feedcode | String |
@@ -78,16 +76,14 @@ In order to trade, you need to send an order to the exchange (via TCP). Every or
 | PRICE | The order price | Float |
 | VOLUME | The order volume | Int |
 | LATENCY | The latency of the order, in nanoseconds | Int | 
-------------------------------------------
 
 #### Order ack message fields
 
 | Field | Description | Value
-------------------------------------
+-------|-------------|----------------
 | TYPE | The type of message | Fixed value: `ORDER_ACK` |
 | FEEDCODE | The instrument's feedcode | String |
 | PRICE | The traded price | Float |
 | TRADED_VOLUME | The traded volume, positive if you bought, negative if you sold | Int, optional, only set if the order has been successfully processed |
 | ERROR | | If something went wrong, this field is set, otherwise it is empty | String, optional, only set on error |
-------------------------------------------
 
