@@ -33,7 +33,7 @@ double CalcVWAPPrediction(const TopLevel& level, Side tradedSide, Volume tradedV
 	return CalcVWAPChange(level, tradedSide, tradedVolume) * std::sqrt(tradedVolume.mValue / 10.0);
 }
 
-void Autotrader::OnMulticastMessage(TSCTimestamp timestamp, Address, std::string message)
+void Autotrader::OnMulticastMessage(Address, std::string message)
 {
 	std::cout << "received message: " << message << std::endl;
 

@@ -10,7 +10,7 @@ class IUDPClientHandler
 public:
 	virtual ~IUDPClientHandler() =default;
 
-	virtual void OnMulticastMessage(TSCTimestamp, Address, std::string) =0;
+	virtual void OnMulticastMessage(Address, std::string) =0;
 };
 
 class UDPClient

@@ -14,6 +14,8 @@ extern "C"
 
 using namespace std::string_literals;
 
+extern TSCTimestamp timestampIn;
+
 UDPClient::UDPClient(const std::string& group,
 					 uint16_t port,
 					 IUDPClientHandler& handler) :
@@ -57,11 +59,6 @@ bool UDPClient::Poll()
 		return false;
 	}
 
-	///////////////////////
-	// NOTE: this line CANNOT be moved or modified!
-	const TSCTimestamp timestamp{TSCClock::Now()};
-	//////////////////////
-
 	Address clientAddress;
 	std::memset(&clientAddress, 0, sizeof(clientAddress));
 	socklen_t addressLength = sizeof(clientAddress);
@@ -73,8 +70,13 @@ bool UDPClient::Poll()
 		throw std::runtime_error("recvfrom() failed:"s + std::strerror(errno));
 	}
 
+	///////////////////////
+	// NOTE: this line CANNOT be moved or modified!
+	timestampIn = TSCTimestamp{TSCClock::Now()};
+	//////////////////////
+
 	const std::string message{buffer, static_cast<std::size_t>(bytes_received)};
-	mHandler.OnMulticastMessage(timestamp, clientAddress, message);
+	mHandler.OnMulticastMessage(clientAddress, message);
 
 	return true;
 }

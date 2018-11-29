@@ -14,6 +14,8 @@ extern "C"
 #include <errno.h>
 }
 
+TSCTimestamp timestampIn;
+
 int main()
 {
 	std::signal(SIGINT, [](int /*sig*/) { std::exit(1); });

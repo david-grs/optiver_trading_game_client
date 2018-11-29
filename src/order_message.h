@@ -6,7 +6,6 @@
 
 struct OrderMessage
 {
-	TSCTimestamp mTimestampIn;
 	std::string mUsername;
 	std::string mFeedcode;
 	std::string mAction;

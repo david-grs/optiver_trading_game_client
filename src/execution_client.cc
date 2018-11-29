@@ -15,6 +15,8 @@ extern "C"
 
 using namespace std::string_literals;
 
+extern TSCTimestamp timestampIn;
+
 ExecutionClient::ExecutionClient(std::string address, uint16_t port)
 {
 	if ((mFD = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
@@ -51,10 +53,10 @@ void ExecutionClient::Send(OrderMessage order)
 	message += "|VOLUME=";
 	message += std::to_string(order.mVolume.mValue);
 
-	SendSerializedMessage(order.mTimestampIn, message);
+	SendSerializedMessage(message);
 }
 
-void ExecutionClient::SendSerializedMessage(TSCTimestamp timestampIn, std::string data)
+void ExecutionClient::SendSerializedMessage(std::string data)
 {
 	///////////////////////
 	// NOTE: this block can be modified, as long as the timestamp measurement + latency

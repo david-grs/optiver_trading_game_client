@@ -19,7 +19,7 @@ public:
 	void Send(OrderMessage);
 
 private:
-	void SendSerializedMessage(TSCTimestamp, std::string);
+	void SendSerializedMessage(std::string);
 
 	int mFD;
 	sockaddr_in mRemote;

@@ -15,7 +15,7 @@ public:
 
 private:
 	// [IUDPClientHandler]
-	void OnMulticastMessage(TSCTimestamp, Address, std::string) override;
+	void OnMulticastMessage(Address, std::string) override;
 
 	void OnOrderAck(std::string, Price, Volume);
 	void OnPriceFeed(std::string, Price, Volume, Price, Volume);
