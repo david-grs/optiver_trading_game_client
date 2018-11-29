@@ -45,13 +45,21 @@ void Autotrader::OnMulticastMessage(TSCTimestamp timestamp, Address, std::string
 void Autotrader::OnPriceFeed(std::string feedcode, Price bidPrice, Volume bidVolume, Price askPrice, Volume askVolume)
 {
 	const TopLevel level{bidPrice, bidVolume, askPrice, askVolume};
-	mLastBook.emplace(feedcode, level);
+	auto it = mLastBook.find(feedcode);
+	if (it == mLastBook.cend())
+	{
+		mLastBook.emplace(feedcode, level);
+	}
+	else
+	{
+		it->second = level;
+	}
 }
 
 void Autotrader::OnTrade(std::string feedcode, std::string side, Volume tradedVolume)
 {
 	auto it = mLastBook.find("ESX-FUTURE");
-	if (it == mLastBook.end())
+	if (it == mLastBook.cend())
 		return;
 
 	TopLevel& tradedBook = it->second;
@@ -59,7 +67,7 @@ void Autotrader::OnTrade(std::string feedcode, std::string side, Volume tradedVo
 
 	std::string targetFeedcode = feedcode == "ESX-FUTURE" ? "SP-FUTURE" : "ESX-FUTURE";
 	it = mLastBook.find(targetFeedcode);
-	if (it == mLastBook.end())
+	if (it == mLastBook.cend())
 		return;
 
 	TopLevel& targetBook = it->second;
@@ -90,14 +98,14 @@ void Autotrader::OnOrderAck(std::string feedcode, Price tradedPrice, Volume trad
 void Autotrader::PrintPnl()
 {
 	auto it = mLastBook.find("ESX-FUTURE");
-	if (it != mLastBook.end())
+	if (it != mLastBook.cend())
 	{
 		const TopLevel& book = it->second;
 		std::cout << "pnl_esx=" << CalculatePnL(mESXTrades, book) << std::endl;
 	}
-	
+
 	it = mLastBook.find("SP-FUTURE");
-	if (it != mLastBook.end())
+	if (it != mLastBook.cend())
 	{
 		const TopLevel& book = it->second;
 		std::cout << "pnl_sp=" << CalculatePnL(mSPTrades, book) << std::endl;
