@@ -63,7 +63,7 @@ Example: ```TYPE=TRADE|FEEDCODE=XXXXXX|SIDE=XXXXX|PRICE=XXX|VOLUME=XXX```
 
 
 ### Execution protocol specification
-In order to trade, you need to send an order to the exchange (via TCP). Every order is acknowledged by the exchange
+In order to trade, you need to send an order to the exchange (via UDP). Every order is acknowledged by the exchange
 
 #### Order message fields
 
