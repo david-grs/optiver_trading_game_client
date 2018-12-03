@@ -1,19 +1,22 @@
-# Master Class Optiver Game 
+# Optiver Master Class Game 
 
 During this game, you will be developing an automated trading system!
 
-An exchange is broadcasting prices and trades on two famous indices: S&P500 (SP) and Eurostoxx (ESX), and your goal is to seek for arbitrage opportunities between the two.
+The exchange is broadcasting prices and trades on two famous indices: S&P500 (SP) and Eurostoxx (ESX), and your goal is to seek for arbitrage opportunities between the two.
 
 The system is composed by:
 
   * The exchange, broadcasting through UDP Multicast the public information messages
-  * The exchange execution gateway, with which you will communicate in order to send orders (and trade!)
+  * The exchange execution gateway, with which you will communicate in order to send orders &mdash; and hopefully trade!
   * Your automated trading client, that contains a prediction model between the two instruments
 
 
-To help you a bit, we provide a skeleton of autotrader, with a prediction model between the S&P and ESX instruments!
+To help you a bit, we provide you the skeleton of an autotrader, with a prediction model between the S&P and ESX instruments, and a partial implementation
+of the information protocol.
 
-Last thing: when competing for an opportunity, the exchange is using a first come first serve policy... 
+**All of you are trading on the same exchange, which means that you will compete for the same opportunities... In order to deal with competitive orders, the exchange is using a first come first serve policy!**
+
+**Last thing: every trade done will impact your position &mdash; keep an eye on it to manage your risk exposure!**
 
 Good luck!
 
