@@ -41,16 +41,8 @@ void Autotrader::OnMulticastMessage(Address, std::string message)
 
 void Autotrader::OnPriceFeed(std::string feedcode, Price bidPrice, Volume bidVolume, Price askPrice, Volume askVolume)
 {
-	const TopLevel level{bidPrice, bidVolume, askPrice, askVolume};
-	auto it = mLastBook.find(feedcode);
-	if (it == mLastBook.cend())
-	{
-		mLastBook.emplace(feedcode, level);
-	}
-	else
-	{
-		it->second = level;
-	}
+	const TopLevel newBook{bidPrice, bidVolume, askPrice, askVolume};
+	mLastBook[feedcode] = newBook;
 }
 
 void Autotrader::OnTrade(std::string feedcode, std::string side, Volume tradedVolume)

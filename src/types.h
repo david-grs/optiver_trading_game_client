@@ -17,6 +17,8 @@ enum struct Side { Bid, Ask };
 
 struct TopLevel
 {
+	TopLevel() =default;
+
 	TopLevel(Price bidPrice, Volume bidVolume, Price askPrice, Volume askVolume) :
 		mBidPrice(bidPrice), mBidVolume(bidVolume), mAskPrice(askPrice), mAskVolume(askVolume)
 	{}
