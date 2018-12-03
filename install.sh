@@ -22,5 +22,5 @@ sed -i s/REMOTE_ADDRESS/$remote_addr/g src/autotrader.h
 sudo apt update
 sudo apt -y install g++ gdb cmake libboost-all-dev
 
-mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && make -j2 && git commit -am "configuration" && echo -e "*****************************\n      SETUP COMPLETE\n*****************************"
+mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && make -j2 && git commit -am "configuration" && echo -e "*****************************\n      SETUP COMPLETE\n*****************************\nLOCAL_ADDRESS = $local_eth0_addr"
 
