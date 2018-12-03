@@ -5,6 +5,11 @@ if [ "$#" -ne 2 ]; then
   exit 1
 fi
 
+if [ "$1" = "YOUR_USERNAME" ]; then
+  echo "username should be different than YOUR_USERNAME"
+  exit 1
+fi
+
 local_eth0_addr=$(ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
 sed -i s/LOCAL_ADDRESS/$local_eth0_addr/g src/autotrader.h
 
