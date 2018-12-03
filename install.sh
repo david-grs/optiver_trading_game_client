@@ -14,5 +14,5 @@ sed -i s/USERNAME/$username/ src/autotrader_main.cc
 sudo apt update
 sudo apt -y install g++ gdb cmake libboost-all-dev
 
-mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && make -j2
+mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && make -j2 && echo -e "*****************************\n      SETUP COMPLETE\n*****************************"
 
