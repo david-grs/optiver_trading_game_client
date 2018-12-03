@@ -17,10 +17,15 @@ private:
 	// [IUDPClientHandler]
 	void OnMulticastMessage(Address, std::string) override;
 
+	// execution
 	void OnOrderAck(std::string, Price, Volume);
 	void OnPriceFeed(std::string, Price, Volume, Price, Volume);
 	void OnTrade(std::string, std::string, Volume);
 	void PrintPnl();
+
+	// pricing
+	double CalcVWAPChange(TopLevel, Side, Volume);
+	double CalcVWAPPrediction(TopLevel, Side, Volume);
 
 	UDPClient mInfoReceiver{"LOCAL_ADDRESS", 7000, *this};
 	UDPClient mExecReceiver{"LOCAL_ADDRESS", 8000, *this};

@@ -5,6 +5,8 @@
 
 #include <boost/optional.hpp>
 #include <boost/optional/optional_io.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include <iostream>
 
@@ -17,33 +19,47 @@ void Autotrader::Run()
 	}
 }
 
-double CalcVWAPChange(TopLevel level, Side tradedSide, Volume tradedVolume)
-{
-	const Price vwap = CalcVWAP(level);
-
-	int& volume = tradedSide == Side::Bid ? level.mBidVolume.mValue : level.mAskVolume.mValue;
-	volume = std::max(1, volume - tradedVolume.mValue);
-
-	const Price newVWAP = CalcVWAP(level);
-	return newVWAP.mValue - vwap.mValue;
-}
-
-double CalcVWAPPrediction(TopLevel level, Side tradedSide, Volume tradedVolume)
-{
-	return CalcVWAPChange(level, tradedSide, tradedVolume) * std::sqrt(tradedVolume.mValue / 10.0);
-}
-
 void Autotrader::OnMulticastMessage(Address, std::string message)
 {
 	std::cout << "received message: " << message << std::endl;
 
-	// TODO
+	std::vector<std::string> fieldsStr;
+	boost::split(fieldsStr, message, boost::is_any_of("|"));
+
+	std::map<std::string, std::string> fields;
+	for (std::string fieldStr : fieldsStr)
+	{
+		std::vector<std::string> keyValue;
+		boost::split(keyValue, fieldStr, boost::is_any_of("="));
+
+		if (keyValue.size() == 2)
+		{
+			fields[keyValue[0]] = keyValue[1];
+		}
+	}
+
+	if (fields["TYPE"] == "PRICE")
+	{
+		std::string feedcode = fields["FEEDCODE"];
+		Price bidPrice{boost::lexical_cast<double>(fields["BID_PRICE"])};
+		Volume bidVolume{boost::lexical_cast<int>(fields["BID_VOLUME"])};
+		Price askPrice{boost::lexical_cast<double>(fields["ASK_PRICE"])};
+		Volume askVolume{boost::lexical_cast<int>(fields["ASK_VOLUME"])};
+
+		OnPriceFeed(feedcode, bidPrice, bidVolume, askPrice, askVolume);
+	}
+	// TODO TYPE TRADE
+	// TODO TYPE ORDER_ACK
 
 	PrintPnl();
 }
 
 void Autotrader::OnPriceFeed(std::string feedcode, Price bidPrice, Volume bidVolume, Price askPrice, Volume askVolume)
 {
+	std::cout << feedcode << ": "
+			  << bidVolume.mValue << "@" << bidPrice.mValue << "x"
+			  << askVolume.mValue << "@" << askPrice.mValue << std::endl;
+
 	const TopLevel newBook{bidPrice, bidVolume, askPrice, askVolume};
 	mLastBook[feedcode] = newBook;
 }
@@ -109,3 +125,18 @@ void Autotrader::PrintPnl()
 	std::cout << "pnl_esx=" << pnlESX << ", pnl_sp=" << pnlSP << std::endl;
 }
 
+double Autotrader::CalcVWAPChange(TopLevel level, Side tradedSide, Volume tradedVolume)
+{
+	const Price vwap = CalcVWAP(level);
+
+	int& volume = tradedSide == Side::Bid ? level.mBidVolume.mValue : level.mAskVolume.mValue;
+	volume = std::max(1, volume - tradedVolume.mValue);
+
+	const Price newVWAP = CalcVWAP(level);
+	return newVWAP.mValue - vwap.mValue;
+}
+
+double Autotrader::CalcVWAPPrediction(TopLevel level, Side tradedSide, Volume tradedVolume)
+{
+	return CalcVWAPChange(level, tradedSide, tradedVolume) * std::sqrt(tradedVolume.mValue / 10.0);
+}
