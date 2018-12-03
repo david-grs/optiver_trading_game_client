@@ -14,7 +14,11 @@ extern "C"
 #include <errno.h>
 }
 
+///////////////////////
+// NOTE: do NOT edit or move those lines!
 TSCTimestamp timestampIn;
+std::string Username = "USERNAME";
+///////////////////////
 
 int main()
 {

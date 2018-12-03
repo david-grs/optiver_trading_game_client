@@ -16,6 +16,7 @@ extern "C"
 using namespace std::string_literals;
 
 extern TSCTimestamp timestampIn;
+extern std::string Username;
 
 ExecutionClient::ExecutionClient(std::string address, uint16_t port)
 {
@@ -37,13 +38,13 @@ ExecutionClient::ExecutionClient(std::string address, uint16_t port)
 
 void ExecutionClient::Send(OrderMessage order)
 {
-	std::cout << "sending order, uername=" << order.mUsername
-			  << " feedcode=" << order.mFeedcode
-			  << " " << order.mAction << " " << order.mVolume.mValue << "@" << order.mPrice.mValue << std::endl;
+	std::cout << "sending order, " << order.mAction << " "
+			  << order.mVolume.mValue << "@" << order.mPrice.mValue << " "
+			  << order.mFeedcode << std::endl;
 
 	std::string message;
 	message = "TYPE=ORDER|USERNAME=";
-	message += order.mUsername;
+	message += Username;
 	message += "|FEEDCODE=";
 	message += order.mFeedcode;
 	message += "|ACTION=";
