@@ -25,7 +25,7 @@ double CalcVWAPChange(TopLevel level, Side tradedSide, Volume tradedVolume)
 	return newVWAP.mValue - vwap.mValue;
 }
 
-double CalcVWAPPrediction(const TopLevel& level, Side tradedSide, Volume tradedVolume)
+double CalcVWAPPrediction(TopLevel level, Side tradedSide, Volume tradedVolume)
 {
 	return CalcVWAPChange(level, tradedSide, tradedVolume) * std::sqrt(tradedVolume.mValue / 10.0);
 }
@@ -47,28 +47,31 @@ void Autotrader::OnPriceFeed(std::string feedcode, Price bidPrice, Volume bidVol
 
 void Autotrader::OnTrade(std::string feedcode, std::string side, Volume tradedVolume)
 {
-	auto it = mLastBook.find("ESX-FUTURE");
+	auto it = mLastBook.find(feedcode);
 	if (it == mLastBook.cend())
 		return;
 
 	TopLevel& tradedBook = it->second;
 	Side tradedSide = side == "BID" ? Side::Bid : Side::Ask;
 
+	std::string action = tradedSide == Side::Bid ? "SELL" : "BUY";
 	std::string targetFeedcode = feedcode == "ESX-FUTURE" ? "SP-FUTURE" : "ESX-FUTURE";
+
 	it = mLastBook.find(targetFeedcode);
 	if (it == mLastBook.cend())
 		return;
 
 	TopLevel& targetBook = it->second;
-
 	Price targetVWAP = CalcVWAP(targetBook);
-	double vwapChange = CalcVWAPPrediction(tradedBook, tradedSide, tradedVolume);
-	Price targetPrice = tradedSide == Side::Bid ? targetBook.mBidPrice : targetBook.mAskPrice;
 
-	if ((tradedSide == Side::Bid && targetPrice.mValue > targetVWAP.mValue + vwapChange)
-		|| (tradedSide == Side::Ask && targetPrice.mValue < targetVWAP.mValue + vwapChange))
+	double vwapChange = CalcVWAPPrediction(tradedBook, tradedSide, tradedVolume);
+	Price targetPrice = action == "BUY" ? targetBook.mAskPrice : targetBook.mBidPrice;
+
+	if ((action == "SELL" && targetPrice.mValue > targetVWAP.mValue + vwapChange)
+		|| (action == "BUY" && targetPrice.mValue < targetVWAP.mValue + vwapChange))
 	{
-		// TODO send order
+		OrderMessage order{targetFeedcode, action, targetPrice, Volume{10}};
+		mExecutionClient.Send(order);
 	}
 }
 
