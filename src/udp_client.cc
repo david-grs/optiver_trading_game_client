@@ -22,7 +22,7 @@ UDPClient::UDPClient(std::string group, uint16_t port, IUDPClientHandler& handle
 {
 	if ((mSocket = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
 	{
-		throw std::runtime_error("socket() failed: "s + std::strerror(errno));
+		throw std::runtime_error("udp client: socket() failed: "s + std::strerror(errno));
 	}
 
 	Address address;
@@ -31,9 +31,14 @@ UDPClient::UDPClient(std::string group, uint16_t port, IUDPClientHandler& handle
 	address.sin_port = htons(port);
 	address.sin_addr.s_addr = ::inet_addr(group.data());
 
+	if (address.sin_addr.s_addr == INADDR_NONE)
+	{
+		throw std::runtime_error("udp client: inet_addr() failed: "s + std::strerror(errno));
+	}
+
 	if ((::bind(mSocket, (struct sockaddr *)&address, sizeof(address))) < 0)
 	{
-		throw std::runtime_error("bind() failed: "s + std::strerror(errno));
+		throw std::runtime_error("udp client: bind() failed: "s + std::strerror(errno));
 	}
 }
 
@@ -50,7 +55,7 @@ bool UDPClient::Poll()
 	const int res = ::select(mSocket + 1, &readfds, nullptr, nullptr, &timeout);
 	if (res == -1)
 	{
-		throw std::runtime_error("select() failed: "s + std::strerror(errno));
+		throw std::runtime_error("udp client: select() failed: "s + std::strerror(errno));
 	}
 
 	if (res == 0 || !FD_ISSET(mSocket, &readfds))
@@ -66,7 +71,7 @@ bool UDPClient::Poll()
 	const auto bytes_received = ::recvfrom(mSocket, buffer, sizeof(buffer), 0, (struct sockaddr *)&clientAddress, &addressLength);
 	if (bytes_received < 0)
 	{
-		throw std::runtime_error("recvfrom() failed:"s + std::strerror(errno));
+		throw std::runtime_error("udp client: recvfrom() failed:"s + std::strerror(errno));
 	}
 
 	///////////////////////

@@ -23,7 +23,7 @@ ExecutionClient::ExecutionClient(std::string address, uint16_t port)
 {
 	if ((mFD = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
 	{
-		throw std::runtime_error("socket() failed: "s + std::strerror(errno));
+		throw std::runtime_error("execution client: socket() failed: "s + std::strerror(errno));
 	}
 
 	std::memset(&mRemote, 0, sizeof(mRemote));
@@ -33,7 +33,7 @@ ExecutionClient::ExecutionClient(std::string address, uint16_t port)
 
 	if (mRemote.sin_addr.s_addr == INADDR_NONE)
 	{
-		throw std::runtime_error("inet_addr() failed: "s + std::strerror(errno));
+		throw std::runtime_error("execution client: inet_addr() failed: "s + std::strerror(errno));
 	}
 }
 
@@ -71,6 +71,6 @@ void ExecutionClient::SendSerializedMessage(std::string data)
 
 	if (::sendto(mFD, data.data(), data.size(), 0, (sockaddr*)&mRemote, sizeof(mRemote)) < 0)
 	{
-		throw std::runtime_error("sendto() failed:"s + std::strerror(errno));
+		throw std::runtime_error("execution client: sendto() failed:"s + std::strerror(errno));
 	}
 }
