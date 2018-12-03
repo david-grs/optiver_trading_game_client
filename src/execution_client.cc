@@ -15,7 +15,7 @@ extern "C"
 
 using namespace std::string_literals;
 
-extern TSCTimestamp timestampIn;
+extern TSCTimestamp TimestampIn;
 extern std::string Username;
 
 ExecutionClient::ExecutionClient(std::string address, uint16_t port)
@@ -60,11 +60,11 @@ void ExecutionClient::Send(OrderMessage order)
 void ExecutionClient::SendSerializedMessage(std::string data)
 {
 	///////////////////////
-	// NOTE: this block can be modified, as long as the timestamp measurement + latency
-	// measurement calculation stay the LAST operations before sending the message!
+	// NOTE: this block can be modified, as long as the timestamp measurement stay
+	// the LAST operation before calling sendto()
 	{
 		const TSCTimestamp timestampOut{TSCClock::Now()};
-		data += "|LATENCY=" + std::to_string(TSCClock::FromCycles(timestampOut.mValue - timestampIn.mValue).count());
+		data += "|LATENCY=" + std::to_string(TSCClock::FromCycles(timestampOut.mValue - TimestampIn.mValue).count());
 	}
 	//////////////////////
 

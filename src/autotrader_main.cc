@@ -15,8 +15,8 @@ extern "C"
 }
 
 ///////////////////////
-// NOTE: do NOT edit or move those lines!
-TSCTimestamp timestampIn;
+// NOTE: do NOT edit or move those lines
+TSCTimestamp TimestampIn;
 std::string Username = "USERNAME";
 ///////////////////////
 

@@ -14,7 +14,7 @@ extern "C"
 
 using namespace std::string_literals;
 
-extern TSCTimestamp timestampIn;
+extern TSCTimestamp TimestampIn;
 
 UDPClient::UDPClient(const std::string& group,
 					 uint16_t port,
@@ -71,8 +71,8 @@ bool UDPClient::Poll()
 	}
 
 	///////////////////////
-	// NOTE: this line CANNOT be moved or modified!
-	timestampIn = TSCTimestamp{TSCClock::Now()};
+	// NOTE: do NOT edit or move this line
+	TimestampIn = TSCTimestamp{TSCClock::Now()};
 	//////////////////////
 
 	const std::string message{buffer, static_cast<std::size_t>(bytes_received)};
