@@ -4,14 +4,15 @@
 #include <csignal>
 #include <cstdlib>
 #include <cstring>
+#include <cerrno>
 #include <iostream>
 
+#define _GNU_SOURCE 1
 extern "C"
 {
 #include <sched.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <errno.h>
 }
 
 ///////////////////////
@@ -28,9 +29,9 @@ int main()
 	CPU_ZERO(&set);
 	CPU_SET(0, &set);
 
-	if (sched_setaffinity(getpid(), sizeof(set), &set) == -1)
+	if (::sched_setaffinity(getpid(), sizeof(set), &set) == -1)
 	{
-		std::cerr << "sched_setaffinity failed, " << strerror(errno) << std::endl;
+		std::cerr << "sched_setaffinity failed, " << std::strerror(errno) << std::endl;
 		return 1;
 	}
 

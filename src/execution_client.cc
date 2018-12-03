@@ -2,6 +2,7 @@
 #include "tsc_clock.h"
 
 #include <cstring>
+#include <cerrno>
 #include <stdexcept>
 
 extern "C"
@@ -28,7 +29,7 @@ ExecutionClient::ExecutionClient(std::string address, uint16_t port)
 	std::memset(&mRemote, 0, sizeof(mRemote));
 	mRemote.sin_family = AF_INET;
 	mRemote.sin_port = htons(port);
-	mRemote.sin_addr.s_addr = inet_addr(address.data());
+	mRemote.sin_addr.s_addr = ::inet_addr(address.data());
 
 	if (mRemote.sin_addr.s_addr == INADDR_NONE)
 	{

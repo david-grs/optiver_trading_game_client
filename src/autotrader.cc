@@ -3,10 +3,7 @@
 #include "vwap.h"
 #include "types.h"
 
-#include <boost/lexical_cast.hpp>
-
 #include <iostream>
-#include <regex>
 
 void Autotrader::Run()
 {

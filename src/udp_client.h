@@ -9,15 +9,13 @@ class IUDPClientHandler
 {
 public:
 	virtual ~IUDPClientHandler() =default;
-
 	virtual void OnMulticastMessage(Address, std::string) =0;
 };
 
 class UDPClient
 {
 public:
-	UDPClient(const std::string&, uint16_t, IUDPClientHandler&);
-
+	UDPClient(std::string, uint16_t, IUDPClientHandler&);
 	bool Poll();
 
 private:

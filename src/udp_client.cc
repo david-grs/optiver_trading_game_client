@@ -3,6 +3,7 @@
 
 #include <cstring>
 #include <stdexcept>
+#include <cerrno>
 
 extern "C"
 {
@@ -16,9 +17,7 @@ using namespace std::string_literals;
 
 extern TSCTimestamp TimestampIn;
 
-UDPClient::UDPClient(const std::string& group,
-					 uint16_t port,
-					 IUDPClientHandler& handler) :
+UDPClient::UDPClient(std::string group, uint16_t port, IUDPClientHandler& handler) :
 	mHandler(handler)
 {
 	if ((mSocket = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
@@ -26,13 +25,13 @@ UDPClient::UDPClient(const std::string& group,
 		throw std::runtime_error("socket() failed: "s + std::strerror(errno));
 	}
 
-	Address mcAddress;
-	std::memset(&mcAddress, 0, sizeof(mcAddress));
-	mcAddress.sin_family = AF_INET;
-	mcAddress.sin_port = htons(port);
-	mcAddress.sin_addr.s_addr = inet_addr(group.data());
+	Address address;
+	std::memset(&address, 0, sizeof(address));
+	address.sin_family = AF_INET;
+	address.sin_port = htons(port);
+	address.sin_addr.s_addr = ::inet_addr(group.data());
 
-	if ((::bind(mSocket, (struct sockaddr *)&mcAddress, sizeof(mcAddress))) < 0)
+	if ((::bind(mSocket, (struct sockaddr *)&address, sizeof(address))) < 0)
 	{
 		throw std::runtime_error("bind() failed: "s + std::strerror(errno));
 	}

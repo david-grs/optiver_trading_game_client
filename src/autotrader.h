@@ -22,10 +22,10 @@ private:
 	void OnTrade(std::string, std::string, Volume);
 	void PrintPnl();
 
-	UDPClient mInfoReceiver{"127.0.0.1", 9000, *this};
-	UDPClient mExecReceiver{"127.0.0.1", 8001, *this};
+	UDPClient mInfoReceiver{"LOCAL_ADDRESS", 7000, *this};
+	UDPClient mExecReceiver{"LOCAL_ADDRESS", 8000, *this};
 
-	ExecutionClient mExecutionClient{"127.0.0.1", 8000};
+	ExecutionClient mExecutionClient{"REMOTE_ADDRESS", 8001};
 
 	std::map<std::string /*instrument feedcode*/, TopLevel> mLastBook;
 

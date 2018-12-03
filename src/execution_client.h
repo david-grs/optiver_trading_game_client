@@ -6,11 +6,6 @@
 #include <string>
 #include <cstdint>
 
-extern "C"
-{
-#include <netinet/in.h>
-}
-
 class ExecutionClient
 {
 public:
@@ -22,5 +17,5 @@ private:
 	void SendSerializedMessage(std::string);
 
 	int mFD;
-	sockaddr_in mRemote;
+	Address mRemote;
 };
