@@ -1,7 +1,7 @@
 #!/bin/bash 
 
-if [ "$#" -ne 1 ]; then
-  echo "usage: $0 username"
+if [ "$#" -ne 2 ]; then
+  echo "usage: $0 username remote_address"
   exit 1
 fi
 
@@ -11,8 +11,11 @@ sed -i s/LOCAL_ADDRESS/$local_eth0_addr/g src/autotrader.h
 username=$1
 sed -i s/USERNAME/$username/ src/autotrader_main.cc
 
+remote_addr=$2
+sed -i s/REMOTE_ADDRESS/$remote_addr/g src/autotrader.h
+
 sudo apt update
 sudo apt -y install g++ gdb cmake libboost-all-dev
 
-mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && make -j2 && echo -e "*****************************\n      SETUP COMPLETE\n*****************************"
+mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && make -j2 && git commit -am "configuration" && echo -e "*****************************\n      SETUP COMPLETE\n*****************************"
 
