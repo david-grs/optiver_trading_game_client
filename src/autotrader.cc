@@ -3,6 +3,9 @@
 #include "vwap.h"
 #include "types.h"
 
+#include <boost/optional.hpp>
+#include <boost/optional/optional_io.hpp>
+
 #include <iostream>
 
 void Autotrader::Run()
@@ -89,18 +92,20 @@ void Autotrader::OnOrderAck(std::string feedcode, Price tradedPrice, Volume trad
 
 void Autotrader::PrintPnl()
 {
+	boost::optional<double> pnlESX, pnlSP;
+
 	auto it = mLastBook.find("ESX-FUTURE");
 	if (it != mLastBook.cend())
 	{
-		const TopLevel& book = it->second;
-		std::cout << "pnl_esx=" << CalculatePnL(mESXTrades, book) << std::endl;
+		pnlESX = CalculatePnL(mESXTrades, it->second);
 	}
 
 	it = mLastBook.find("SP-FUTURE");
 	if (it != mLastBook.cend())
 	{
-		const TopLevel& book = it->second;
-		std::cout << "pnl_sp=" << CalculatePnL(mSPTrades, book) << std::endl;
+		pnlSP = CalculatePnL(mSPTrades, it->second);
 	}
+
+	std::cout << "pnl_esx=" << pnlESX << ", pnl_sp=" << pnlSP << std::endl;
 }
 
