@@ -17,7 +17,11 @@ extern "C"
 using namespace std::string_literals;
 
 extern TSCTimestamp TimestampIn;
+
+///////////////////////
+// NOTE: do NOT edit this line
 static const std::string Username = "USERNAME";
+///////////////////////
 
 ExecutionClient::ExecutionClient(std::string address, uint16_t port)
 {
