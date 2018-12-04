@@ -16,7 +16,7 @@ of the information protocol.
 
 **All of you are trading on the same exchange, which means that you will compete for the same opportunities... In order to deal with competitive orders, the exchange is using a first come first serve policy!**
 
-**Last thing: every trade done will impact your position &mdash; keep an eye on it to manage your risk exposure!**
+**Last thing: every trade will impact your position &mdash; keep an eye on it to manage your risk exposure!**
 
 Good luck!
 
