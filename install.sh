@@ -14,7 +14,7 @@ local_eth0_addr=$(ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/
 sed -i s/LOCAL_ADDRESS/$local_eth0_addr/g src/autotrader.h
 
 username=$1
-sed -i s/USERNAME/$username/ src/autotrader_main.cc
+sed -i s/USERNAME/$username/ src/execution_client.cc
 
 remote_addr=$2
 sed -i s/REMOTE_ADDRESS/$remote_addr/g src/autotrader.h
