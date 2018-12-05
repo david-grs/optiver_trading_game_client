@@ -86,7 +86,7 @@ In order to trade, you need to send an order to the exchange (via UDP). Every or
 -------|-------------|----------------
 | TYPE | The type of message | Fixed value: `ORDER_ACK` |
 | FEEDCODE | The instrument's feedcode | String |
-| PRICE | The traded price | Float |
+| PRICE | The traded price | Float, optional, only set if the order traded |
 | TRADED_VOLUME | The traded volume, positive if you bought, negative if you sold | Int, optional, only set if the order has been successfully processed |
 | ERROR | The errord description | If something went wrong, this field is set, otherwise it is empty | String, optional, only set on error |
 
