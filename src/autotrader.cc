@@ -1,5 +1,5 @@
 #include "autotrader.h"
-#include "pnl.h"
+#include "trading_result.h"
 #include "vwap.h"
 #include "types.h"
 
@@ -108,21 +108,27 @@ void Autotrader::OnOrderAck(std::string feedcode, Price tradedPrice, Volume trad
 
 void Autotrader::PrintPnl()
 {
-	boost::optional<double> pnlESX, pnlSP;
+	boost::optional<TradingResult> esxResult, spResult;
 
 	auto it = mLastBook.find("ESX-FUTURE");
 	if (it != mLastBook.cend())
 	{
-		pnlESX = CalculatePnL(mESXTrades, it->second);
+		const Price esxValuation = CalcVWAP(it->second);
+		esxResult = CalculateTradingResult(mESXTrades, esxValuation);
 	}
 
 	it = mLastBook.find("SP-FUTURE");
 	if (it != mLastBook.cend())
 	{
-		pnlSP = CalculatePnL(mSPTrades, it->second);
+		const Price spValuation = CalcVWAP(it->second);
+		spResult = CalculateTradingResult(mSPTrades, spValuation);
 	}
 
-	std::cout << "pnl_esx=" << pnlESX << ", pnl_sp=" << pnlSP << std::endl;
+	std::cout << "--------------------------\n"
+			  << "ESX RESULT: " << esxResult << "\n"
+			  << "SP RESULT: " << spResult << "\n"
+			  << "--------------------------"
+			  << std::endl;
 }
 
 double Autotrader::CalcVWAPChange(TopLevel level, Side tradedSide, Volume tradedVolume)

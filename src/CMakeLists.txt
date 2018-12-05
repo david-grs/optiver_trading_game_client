@@ -5,7 +5,7 @@ set(sources
 	execution_client.h
 	execution_client.cc
 	order_message.h
-	pnl.h
+	trading_result.h
 	tsc_clock.h
 	types.h
 	udp_client.h
