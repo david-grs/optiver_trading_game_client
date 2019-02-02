@@ -30,13 +30,13 @@ ExecutionClient::ExecutionClient(uint16_t localPort, std::string remoteHost, uin
 		throw std::runtime_error("execution client: socket() failed: "s + std::strerror(errno));
 	}
 
-	Address local;
-	std::memset(&local, 0, sizeof(local));
-	local.sin_family = AF_INET;
-	local.sin_port = htons(localPort);
-	local.sin_addr.s_addr =  htonl(INADDR_ANY);
+	Address sourceAddr;
+	std::memset(&sourceAddr, 0, sizeof(sourceAddr));
+	sourceAddr.sin_family = AF_INET;
+	sourceAddr.sin_port = htons(localPort);
+	sourceAddr.sin_addr.s_addr =  htonl(INADDR_ANY);
 
-	if (::bind(mFD, (struct sockaddr *)&local, sizeof(local)) < 0)
+	if (::bind(mFD, (sockaddr*)&sourceAddr, sizeof(sourceAddr)) < 0)
 	{
 		throw std::runtime_error("execution client: bind() failed: "s + std::strerror(errno));
 	}
