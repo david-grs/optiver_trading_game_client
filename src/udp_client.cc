@@ -17,30 +17,38 @@ using namespace std::string_literals;
 
 extern TSCTimestamp TimestampIn;
 
-UDPClient::UDPClient(std::string group, uint16_t port, IUDPClientHandler& handler) :
+UDPClient::UDPClient(uint16_t localPort, std::string remoteHost, uint16_t remotePort, IUDPClientHandler& handler) :
 	mHandler(handler)
 {
 	if ((mSocket = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
 	{
-		throw std::runtime_error("udp client: socket() failed: "s + std::strerror(errno));
+		throw std::runtime_error("information client: socket() failed: "s + std::strerror(errno));
 	}
 
-	Address address;
-	std::memset(&address, 0, sizeof(address));
-	address.sin_family = AF_INET;
-	address.sin_port = htons(port);
-	address.sin_addr.s_addr = ::inet_addr(group.data());
+	Address sourceAddr;
+	std::memset(&sourceAddr, 0, sizeof(sourceAddr));
+	sourceAddr.sin_family = AF_INET;
+	sourceAddr.sin_port = htons(localPort);
+	sourceAddr.sin_addr.s_addr =  htonl(INADDR_ANY);
 
-	if (address.sin_addr.s_addr == INADDR_NONE)
+	if (::bind(mSocket, (sockaddr*)&sourceAddr, sizeof(sourceAddr)) < 0)
 	{
-		throw std::runtime_error("udp client: inet_addr() failed: "s + std::strerror(errno));
+		throw std::runtime_error("information client: bind() failed: "s + std::strerror(errno));
 	}
 
-	if ((::bind(mSocket, (struct sockaddr *)&address, sizeof(address))) < 0)
+	std::memset(&mRemote, 0, sizeof(mRemote));
+	mRemote.sin_family = AF_INET;
+	mRemote.sin_port = htons(remotePort);
+	mRemote.sin_addr.s_addr = ::inet_addr(remoteHost.data());
+
+	if (mRemote.sin_addr.s_addr == INADDR_NONE)
 	{
-		throw std::runtime_error("udp client: bind() failed: "s + std::strerror(errno));
+		throw std::runtime_error("information client: inet_addr() failed: "s + std::strerror(errno));
 	}
 }
+
+UDPClient::~UDPClient()
+{}
 
 bool UDPClient::Poll()
 {
@@ -84,3 +92,12 @@ bool UDPClient::Poll()
 
 	return true;
 }
+
+void UDPClient::Send(std::string data)
+{
+	if (::sendto(mSocket, data.data(), data.size(), 0, (sockaddr*)&mRemote, sizeof(mRemote)) < 0)
+	{
+		throw std::runtime_error("udp client: sendto() failed:"s + std::strerror(errno));
+	}
+}
+

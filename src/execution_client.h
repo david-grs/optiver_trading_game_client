@@ -1,17 +1,20 @@
 #pragma once
 
+#include "udp_client.h"
 #include "order_message.h"
-#include "types.h"
 
 #include <string>
 #include <cstdint>
 
-class ExecutionClient
+class ExecutionClient : public UDPClient
 {
 public:
-	ExecutionClient(uint16_t localPort, std::string remoteHost, uint16_t remotePort);
+	ExecutionClient(uint16_t localPort,
+					std::string remoteHost,
+					uint16_t remotePort,
+					IUDPClientHandler& handler);
 
-	void Send(OrderMessage);
+	void SendOrder(OrderMessage);
 
 private:
 	void SendSerializedMessage(std::string);

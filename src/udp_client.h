@@ -15,12 +15,14 @@ public:
 class UDPClient
 {
 public:
-	UDPClient(std::string, uint16_t, IUDPClientHandler&);
-	bool Poll();
+	UDPClient(uint16_t localPort, std::string remoteHost, uint16_t remotePort, IUDPClientHandler& handler);
+	virtual ~UDPClient();
 
-	void Send(Address, std::string);
+	bool Poll();
+	void Send(std::string);
 
 private:
 	IUDPClientHandler& mHandler;
+	Address mRemote;
 	int mSocket;
 };

@@ -16,8 +16,8 @@ void Autotrader::Run()
 
 	while (true)
 	{
-		while (mInfoConnection.Poll());
-		while (mExecConnection.Poll());
+		while (mInformationClient.Poll());
+		while (mExecutionClient.Poll());
 	}
 }
 
@@ -92,7 +92,7 @@ void Autotrader::OnTrade(std::string feedcode, std::string side, Volume tradedVo
 		|| (action == "BUY" && targetPrice.mValue < targetVWAP.mValue + vwapChange))
 	{
 		OrderMessage order{targetFeedcode, action, targetPrice, Volume{10}};
-		mExecutionClient.Send(order);
+		mExecutionClient.SendOrder(order);
 	}
 }
 

@@ -23,36 +23,14 @@ extern TSCTimestamp TimestampIn;
 static const std::string Username = "USERNAME";
 ///////////////////////
 
-ExecutionClient::ExecutionClient(uint16_t localPort, std::string remoteHost, uint16_t remotePort)
-{
-	if ((mFD = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
-	{
-		throw std::runtime_error("execution client: socket() failed: "s + std::strerror(errno));
-	}
+ExecutionClient::ExecutionClient(uint16_t localPort,
+								 std::string remoteHost,
+								 uint16_t remotePort,
+								 IUDPClientHandler& handler) :
+	UDPClient(localPort, remoteHost, remotePort, handler)
+{}
 
-	Address sourceAddr;
-	std::memset(&sourceAddr, 0, sizeof(sourceAddr));
-	sourceAddr.sin_family = AF_INET;
-	sourceAddr.sin_port = htons(localPort);
-	sourceAddr.sin_addr.s_addr =  htonl(INADDR_ANY);
-
-	if (::bind(mFD, (sockaddr*)&sourceAddr, sizeof(sourceAddr)) < 0)
-	{
-		throw std::runtime_error("execution client: bind() failed: "s + std::strerror(errno));
-	}
-
-	std::memset(&mRemote, 0, sizeof(mRemote));
-	mRemote.sin_family = AF_INET;
-	mRemote.sin_port = htons(remotePort);
-	mRemote.sin_addr.s_addr = ::inet_addr(remoteHost.data());
-
-	if (mRemote.sin_addr.s_addr == INADDR_NONE)
-	{
-		throw std::runtime_error("execution client: inet_addr() failed: "s + std::strerror(errno));
-	}
-}
-
-void ExecutionClient::Send(OrderMessage order)
+void ExecutionClient::SendOrder(OrderMessage order)
 {
 	std::cout << "sending order, " << order.mAction << " "
 			  << order.mVolume.mValue << "@" << order.mPrice.mValue << " "
@@ -84,8 +62,5 @@ void ExecutionClient::SendSerializedMessage(std::string data)
 	}
 	//////////////////////
 
-	if (::sendto(mFD, data.data(), data.size(), 0, (sockaddr*)&mRemote, sizeof(mRemote)) < 0)
-	{
-		throw std::runtime_error("execution client: sendto() failed:"s + std::strerror(errno));
-	}
+	Send(data);
 }
