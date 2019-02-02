@@ -1,6 +1,7 @@
 #pragma once
 
 #include "execution_client.h"
+#include "information_client.h"
 #include "udp_client.h"
 
 #include <string>
@@ -27,9 +28,12 @@ private:
 	double CalcVWAPChange(TopLevel, Side, Volume);
 	double CalcVWAPPrediction(TopLevel, Side, Volume);
 
-	UDPClient mInfoReceiver{"LOCAL_ADDRESS", 7000, *this};
-	UDPClient mExecReceiver{"LOCAL_ADDRESS", 8000, *this};
+	void SubscribeToPrices();
 
+	UDPClient mInfoConnection{"LOCAL_ADDRESS", 7000, *this};
+	UDPClient mExecConnection{"LOCAL_ADDRESS", 8000, *this};
+
+	InformationClient mInformationClient{"REMOTE_ADDRESS", 7001};
 	ExecutionClient mExecutionClient{"REMOTE_ADDRESS", 8001};
 
 	std::map<std::string /*instrument feedcode*/, TopLevel> mLastBook;

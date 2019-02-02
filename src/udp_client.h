@@ -18,6 +18,8 @@ public:
 	UDPClient(std::string, uint16_t, IUDPClientHandler&);
 	bool Poll();
 
+	void Send(Address, std::string);
+
 private:
 	IUDPClientHandler& mHandler;
 	int mSocket;

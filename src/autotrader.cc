@@ -12,10 +12,12 @@
 
 void Autotrader::Run()
 {
+	mInformationClient.Subscribe();
+
 	while (true)
 	{
-		while (mInfoReceiver.Poll());
-		while (mExecReceiver.Poll());
+		while (mInfoConnection.Poll());
+		while (mExecConnection.Poll());
 	}
 }
 
