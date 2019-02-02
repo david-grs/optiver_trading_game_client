@@ -13,17 +13,28 @@ extern "C"
 
 using namespace std::string_literals;
 
-InformationClient::InformationClient(std::string address, uint16_t port)
+InformationClient::InformationClient(uint16_t localPort, std::string remoteHost, uint16_t remotePort)
 {
 	if ((mFD = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0)
 	{
 		throw std::runtime_error("information client: socket() failed: "s + std::strerror(errno));
 	}
 
+	Address local;
+	std::memset(&local, 0, sizeof(local));
+	local.sin_family = AF_INET;
+	local.sin_port = htons(localPort);
+	local.sin_addr.s_addr =  htonl(INADDR_ANY);
+
+	if (::bind(mFD, (struct sockaddr *)&local, sizeof(local)) < 0)
+	{
+		throw std::runtime_error("information client: bind() failed: "s + std::strerror(errno));
+	}
+
 	std::memset(&mRemote, 0, sizeof(mRemote));
 	mRemote.sin_family = AF_INET;
-	mRemote.sin_port = htons(port);
-	mRemote.sin_addr.s_addr = ::inet_addr(address.data());
+	mRemote.sin_port = htons(remotePort);
+	mRemote.sin_addr.s_addr = ::inet_addr(remoteHost.data());
 
 	if (mRemote.sin_addr.s_addr == INADDR_NONE)
 	{

@@ -8,7 +8,7 @@
 class InformationClient
 {
 public:
-	InformationClient(std::string, uint16_t);
+	InformationClient(uint16_t localPort, std::string remoteHost, uint16_t remotePort);
 
 	void Subscribe();
 

@@ -1,7 +1,7 @@
 #!/bin/bash 
 
-if [ "$#" -ne 2 ]; then
-  echo "usage: $0 username remote_address"
+if [ "$#" -ne 3 ]; then
+  echo "usage: $0 username remote_address id"
   exit 1
 fi
 
@@ -18,6 +18,12 @@ sed -i "s/std::string Username = \"USERNAME\"/std::string Username = \"$username
 
 remote_addr=$2
 sed -i s/REMOTE_ADDRESS/$remote_addr/g src/autotrader.h
+
+local_info_port=`expr 7000 + $3`
+sed -i s/LOCAL_INFO_PORT/$local_info_port/g src/autotrader.h
+
+local_exec_port=`expr 8000 + $3`
+sed -i s/LOCAL_EXEC_PORT/$local_exec_port/g src/autotrader.h
 
 sudo apt update
 sudo apt -y install g++ gdb cmake libboost-all-dev

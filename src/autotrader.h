@@ -30,11 +30,11 @@ private:
 
 	void SubscribeToPrices();
 
-	UDPClient mInfoConnection{"LOCAL_ADDRESS", 7000, *this};
-	UDPClient mExecConnection{"LOCAL_ADDRESS", 8000, *this};
+	UDPClient mInfoConnection{"LOCAL_ADDRESS", LOCAL_INFO_PORT, *this};
+	UDPClient mExecConnection{"LOCAL_ADDRESS", LOCAL_EXEC_PORT, *this};
 
-	InformationClient mInformationClient{"REMOTE_ADDRESS", 7001};
-	ExecutionClient mExecutionClient{"REMOTE_ADDRESS", 8001};
+	InformationClient mInformationClient{LOCAL_INFO_PORT, "REMOTE_ADDRESS", 7001};
+	ExecutionClient mExecutionClient{LOCAL_EXEC_PORT, "REMOTE_ADDRESS", 8001};
 
 	std::map<std::string /*instrument feedcode*/, TopLevel> mLastBook;
 

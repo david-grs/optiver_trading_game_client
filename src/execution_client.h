@@ -9,7 +9,7 @@
 class ExecutionClient
 {
 public:
-	ExecutionClient(std::string, uint16_t);
+	ExecutionClient(uint16_t localPort, std::string remoteHost, uint16_t remotePort);
 
 	void Send(OrderMessage);
 
