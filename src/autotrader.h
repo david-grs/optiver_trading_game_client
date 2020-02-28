@@ -33,8 +33,8 @@ private:
 	static constexpr uint16_t InfoServerPort = 7001;
 	static constexpr uint16_t ExecServerPort = 8001;
 
-	InformationClient mInformationClient{LOCAL_INFO_PORT, "REMOTE_ADDRESS", InfoServerPort, *this};
-	ExecutionClient mExecutionClient{LOCAL_EXEC_PORT, "REMOTE_ADDRESS", ExecServerPort, *this};
+	InformationClient mInformationClient{7002, "127.0.0.1", InfoServerPort, *this};
+	ExecutionClient mExecutionClient{8002, "127.0.0.1", ExecServerPort, *this};
 
 	std::map<std::string /*instrument feedcode*/, TopLevel> mLastBook;
 

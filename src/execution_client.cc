@@ -38,7 +38,9 @@ void ExecutionClient::SendOrder(OrderMessage order)
 
 	std::string message;
 	message = "TYPE=ORDER|USERNAME=";
-	message += Username;
+	message += "Team01";
+	message += "|PASSWORD=";
+	message += "KQMCxSEd";
 	message += "|FEEDCODE=";
 	message += order.mFeedcode;
 	message += "|ACTION=";

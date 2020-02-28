@@ -50,8 +50,23 @@ void Autotrader::OnMulticastMessage(Address, std::string message)
 
 		OnPriceFeed(feedcode, bidPrice, bidVolume, askPrice, askVolume);
 	}
-	// TODO TYPE TRADE
-	// TODO TYPE ORDER_ACK
+
+	if (fields["TYPE"] == "TRADE")
+	{
+		//Price price{boost::lexical_cast<double>(fields["PRICE"])};
+		Volume volume{boost::lexical_cast<int>(fields["VOLUME"])};
+		OnTrade(fields["FEEDCODE"], fields["SIDE"], volume);
+	}
+
+	if (fields["TYPE"] == "ORDER_ACK")
+	{
+		if (fields.count("ERROR") == 0)
+		{
+			Price price{boost::lexical_cast<double>(fields["PRICE"])};
+			Volume volume{boost::lexical_cast<int>(fields["TRADED_VOLUME"])};
+			OnOrderAck(fields["FEEDCODE"], price, volume);
+		}
+	}
 
 	PrintPnl();
 }
@@ -92,6 +107,7 @@ void Autotrader::OnTrade(std::string feedcode, std::string side, Volume tradedVo
 		|| (action == "BUY" && targetPrice.mValue < targetVWAP.mValue + vwapChange))
 	{
 		OrderMessage order{targetFeedcode, action, targetPrice, Volume{10}};
+		std::cout << "********** SEND ORDER: vwap_change: " << vwapChange << " order: " << order.mFeedcode << ' ' << order.mAction << ' ' << order.mPrice.mValue << '@' << order.mVolume.mValue << std::endl;
 		mExecutionClient.SendOrder(order);
 	}
 }
