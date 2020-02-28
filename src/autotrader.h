@@ -2,8 +2,12 @@
 
 #include "execution_client.h"
 #include "information_client.h"
+#include "order_message.h"
 #include "udp_client.h"
 
+#include <boost/optional.hpp>
+
+#include <array>
 #include <string>
 #include <vector>
 #include <utility>
@@ -30,14 +34,21 @@ private:
 
 	void SubscribeToPrices();
 
+	void RunStrategy(const std::string&, const std::array<TopLevel, 2>&);
+
 	static constexpr uint16_t InfoServerPort = 7001;
 	static constexpr uint16_t ExecServerPort = 8001;
 
-	InformationClient mInformationClient{LOCAL_INFO_PORT, "REMOTE_ADDRESS", InfoServerPort, *this};
-	ExecutionClient mExecutionClient{LOCAL_EXEC_PORT, "REMOTE_ADDRESS", ExecServerPort, *this};
+	InformationClient mInformationClient{7002, "127.0.0.1", InfoServerPort, *this};
+	ExecutionClient mExecutionClient{8002, "127.0.0.1", ExecServerPort, *this};
 
 	std::map<std::string /*instrument feedcode*/, TopLevel> mLastBook;
+	std::map<std::string /*instrument feedcode*/, std::array<TopLevel, 2>> mLastBookHistory;
+
+	boost::optional<OrderMessage> mNextOrder;
 
 	std::vector<std::pair<Price, Volume>> mESXTrades;
 	std::vector<std::pair<Price, Volume>> mSPTrades;
+
+	std::map<std::string, long int> mPriceCount;
 };

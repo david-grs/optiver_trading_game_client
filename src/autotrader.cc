@@ -64,10 +64,18 @@ void Autotrader::OnPriceFeed(std::string feedcode, Price bidPrice, Volume bidVol
 
 	const TopLevel newBook{bidPrice, bidVolume, askPrice, askVolume};
 	mLastBook[feedcode] = newBook;
+
+	auto& history = mLastBookHistory[feedcode];
+	history[0] = history[1];
+	history[1] = newBook;
+	++mPriceCount[feedcode];
+
+	RunStrategy(feedcode, history);
 }
 
-void Autotrader::OnTrade(std::string feedcode, std::string side, Volume tradedVolume)
+void Autotrader::OnTrade(const std::string feedcode, std::string side, Volume tradedVolume)
 {
+/*
 	auto it = mLastBook.find(feedcode);
 	if (it == mLastBook.cend())
 		return;
@@ -93,6 +101,75 @@ void Autotrader::OnTrade(std::string feedcode, std::string side, Volume tradedVo
 	{
 		OrderMessage order{targetFeedcode, action, targetPrice, Volume{10}};
 		mExecutionClient.SendOrder(order);
+	}
+*/
+}
+
+void Autotrader::RunStrategy(const std::string& feedcode, const std::array<TopLevel, 2>& history)
+{
+	if (mPriceCount[feedcode] < 2)
+	{
+		// Need price history.
+		return;
+	}
+
+	if (feedcode == "SP-FUTURE")
+	{
+		return;
+	}
+
+	auto& price1 = history[0];
+	auto& price2 = history[1];
+
+	if (mNextOrder)
+	{
+		if (mNextOrder->mAction == "SELL")
+		{
+			if (price2.mBidPrice.mValue >= price1.mBidPrice.mValue)
+			{
+				// Keep riding the wave.
+				std::cout << "***** ride buy" << std::endl;
+				mNextOrder->mPrice = price2.mBidPrice;
+				return;
+			}
+			else
+			{
+				// Profit.
+				std::cout << "***** close buy; sell @ " << mNextOrder->mPrice.mValue << std::endl;
+				mExecutionClient.SendOrder(*mNextOrder);
+				mNextOrder = boost::none;
+			}
+		}
+		else
+		{
+			if (price2.mAskPrice.mValue <= price1.mAskPrice.mValue)
+			{
+				// Keep riding the wave.
+				std::cout << "***** ride sell" << std::endl;
+				mNextOrder->mPrice = price2.mAskPrice;
+				return;
+			}
+			else
+			{
+				// Profit.
+				std::cout << "***** close sell; buy @ " << mNextOrder->mPrice.mValue << std::endl;
+				mExecutionClient.SendOrder(*mNextOrder);
+				mNextOrder = boost::none;
+			}
+		}
+	}
+
+	if (price2.mBidPrice.mValue > price1.mAskPrice.mValue)
+	{
+		std::cout << "***** enter buy @ " << price1.mAskPrice.mValue << std::endl;
+		mExecutionClient.SendOrder(OrderMessage{ feedcode, "BUY", price1.mAskPrice, Volume{1} });
+		mNextOrder = OrderMessage{ feedcode, "SELL", price2.mBidPrice, Volume{1} };
+	}
+	else if (price1.mBidPrice.mValue > price2.mAskPrice.mValue)
+	{
+		std::cout << "***** enter sell @ " << price1.mBidPrice.mValue << std::endl;
+		mExecutionClient.SendOrder(OrderMessage{ feedcode, "SELL", price1.mBidPrice, Volume{1} });
+		mNextOrder = OrderMessage{ feedcode, "BUY", price2.mAskPrice, Volume{1} };
 	}
 }
 
