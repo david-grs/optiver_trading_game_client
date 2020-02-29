@@ -62,9 +62,12 @@ void Autotrader::OnMulticastMessage(Address, std::string message)
 	{
 		if (fields.count("ERROR") == 0)
 		{
-			Price price{boost::lexical_cast<double>(fields["PRICE"])};
 			Volume volume{boost::lexical_cast<int>(fields["TRADED_VOLUME"])};
-			OnOrderAck(fields["FEEDCODE"], price, volume);
+			if (volume.mValue > 0)
+			{
+				Price price{boost::lexical_cast<double>(fields["PRICE"])};
+				OnOrderAck(fields["FEEDCODE"], price, volume);
+			}
 		}
 	}
 

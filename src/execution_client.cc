@@ -58,10 +58,10 @@ void ExecutionClient::SendSerializedMessage(std::string data)
 	///////////////////////
 	// NOTE: this block can be modified, as long as the timestamp measurement stay
 	// the LAST operation before calling sendto()
-	{
-		const TSCTimestamp timestampOut{TSCClock::Now()};
-		data += "|LATENCY=" + std::to_string(TSCClock::FromCycles(timestampOut.mValue - TimestampIn.mValue).count());
-	}
+	//{
+	//	const TSCTimestamp timestampOut{TSCClock::Now()};
+	//	data += "|LATENCY=" + std::to_string(TSCClock::FromCycles(timestampOut.mValue - TimestampIn.mValue).count());
+	//}
 	//////////////////////
 
 	Send(data);
